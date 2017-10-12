@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="#fafafa"
+              android:gravity="center"
+              android:paddingTop="10dp">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:paddingLeft="20dp">
+
+        <ImageView
+            android:id="@+id/iv_state_show_point"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/state_show_old"/>
+
+        <TextView
+            android:id="@+id/tv_state_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="11:00"
+            android:textSize="20sp"
+            android:layout_marginLeft="20dp"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:paddingLeft="35dp"
+        android:layout_marginTop="10dp">
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@android:color/darker_gray"/>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="35dp">
+
+            <TextView
+                android:id="@+id/tv_state_work"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="正常工作，工作进程50%，阶段第三段"
+                android:textSize="17sp"/>
+
+            <TextView
+                android:id="@+id/tv_state_temp_humidity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="温度：56℃，湿度：42%"
+                android:textSize="17sp"
+                android:visibility="gone"/>
+
+            <TextView
+                android:id="@+id/tv_state_fan"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="循环风机：开启，辅助风机：开启"
+                android:textSize="17sp"/>
+
+            <TextView
+                android:id="@+id/tv_state_cold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="冷风门1：开启，冷风门2：关闭"
+                android:textSize="17sp"/>
+
+            <TextView
+                android:id="@+id/tv_state_valve"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="电磁阀1：开启，电磁阀2：关闭"
+                android:textSize="17sp"/>
+
+
+            <TextView
+                android:id="@+id/tv_state_fire"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="鼓风机：开启，点火：开启"
+                android:textSize="17sp"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="#fafafa">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:background="@drawable/warning_setting_bg">
+
+        <Button
+            android:id="@+id/btn_setting_warning_back"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:background="@drawable/btn_back"
+            android:layout_marginLeft="10dp"
+            android:layout_centerVertical="true"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="报警设置"
+            android:textSize="20sp"
+            android:textColor="#ffffff"
+            android:layout_centerInParent="true"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="50dp"
+        android:layout_width="300dp"
+        android:layout_height="100dp"
+        android:background="@drawable/warning_setting_open_all_bg">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="全部开启"
+            android:textColor="#999999"
+            android:layout_centerVertical="true"
+            android:textSize="25sp"
+            android:layout_marginLeft="20dp"/>
+
+        <Switch
+            android:id="@+id/switch_warning_setting_open_all"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:thumb="@drawable/my_thumb"
+            android:track="@drawable/switch_setting_selector"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="20dp"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/warning_setting_item_bg">
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/up"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="20dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="上棚湿度温度误差过大"
+            android:textColor="#999999"
+            android:textSize="20sp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="80dp"/>
+
+        <Switch
+            android:id="@+id/switch_warning_setting_up"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:thumb="@drawable/my_thumb_small"
+            android:track="@drawable/switch_setting_selector_small"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="20dp"/>
+
+        <View
+            android:layout_width="330dp"
+            android:layout_height="1dp"
+            android:background="@drawable/warning_setting_line"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@drawable/warning_setting_item_bg">
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/down"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="20dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="下棚湿度温度误差过大"
+            android:textColor="#999999"
+            android:textSize="20sp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="80dp"/>
+
+        <Switch
+            android:id="@+id/switch_warning_setting_down"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:thumb="@drawable/my_thumb_small"
+            android:track="@drawable/switch_setting_selector_small"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="20dp"/>
+
+        <View
+            android:layout_width="330dp"
+            android:layout_height="1dp"
+            android:background="@drawable/warning_setting_line"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/warning_setting_item_bg">
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/warning_setting_fan"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="20dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="循环风机故障"
+            android:textColor="#999999"
+            android:textSize="20sp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="80dp"/>
+
+        <Switch
+            android:id="@+id/switch_warning_setting_fan"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:thumb="@drawable/my_thumb_small"
+            android:track="@drawable/switch_setting_selector_small"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="20dp"/>
+
+        <View
+            android:layout_width="330dp"
+            android:layout_height="1dp"
+            android:background="@drawable/warning_setting_line"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@drawable/warning_setting_item_bg">
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/light"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="20dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="光感检测故障"
+            android:textColor="#999999"
+            android:textSize="20sp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="80dp"/>
+
+        <Switch
+            android:id="@+id/switch_warning_setting_light"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:thumb="@drawable/my_thumb_small"
+            android:track="@drawable/switch_setting_selector_small"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="20dp"/>
+
+        <View
+            android:layout_width="330dp"
+            android:layout_height="1dp"
+            android:background="@drawable/warning_setting_line"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@drawable/warning_setting_item_bg">
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/fire"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="20dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Type something here"
+            android:textColor="#999999"
+            android:textSize="20sp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="80dp"/>
+
+        <Switch
+            android:id="@+id/switch_warning_setting_something"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:thumb="@drawable/my_thumb_small"
+            android:track="@drawable/switch_setting_selector_small"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="20dp"/>
+
+    </RelativeLayout>
+
+</LinearLayout>

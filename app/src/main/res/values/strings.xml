@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">DryingButler</string>
+    <string name="weather_key">wc9dbz12jlelbsfc</string>
+    <string name="location_key">iGqEF3UVYbcoCpePGLXCP8ywe026rLGw</string>
+</resources>
