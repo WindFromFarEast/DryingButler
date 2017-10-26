@@ -13,8 +13,13 @@ import android.util.Log;
 
 public class MyLog
 {
+    private static int key=1;
+
     public static void printInfo(String info)
     {
-        Log.i("DryingButler",info);
+        if (key==1)
+        {
+            Log.i("DryingButler", info);
+        }
     }
 }

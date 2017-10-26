@@ -5,6 +5,9 @@ import android.content.Context;
 
 import com.baidu.location.LocationClient;
 import com.baidu.mapapi.SDKInitializer;
+import com.gizwits.gizwifisdk.api.GizWifiSDK;
+import com.studio.dryingbutler.Utils.StaticData;
+import com.tencent.bugly.crashreport.CrashReport;
 
 /**
  * project name: DryingButler
@@ -24,6 +27,8 @@ public class MyApplication extends Application
     {
         super.onCreate();
         context=getApplicationContext();
+        GizWifiSDK.sharedInstance().startWithAppID(getApplicationContext(), StaticData.GIZWITS_APP_ID);
+        CrashReport.initCrashReport(getApplicationContext(), StaticData.BUGLY_APP_ID, true);
     }
 
     //对外提供Context的接口

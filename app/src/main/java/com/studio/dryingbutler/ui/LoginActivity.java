@@ -1,6 +1,7 @@
 package com.studio.dryingbutler.ui;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -8,10 +9,16 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.gizwits.gizwifisdk.api.GizWifiSDK;
+import com.gizwits.gizwifisdk.enumration.GizWifiErrorCode;
+import com.gizwits.gizwifisdk.listener.GizWifiSDKListener;
 import com.studio.dryingbutler.MainActivity;
 import com.studio.dryingbutler.R;
+import com.studio.dryingbutler.Utils.SharedUtil;
+
 
 /**
  * project name: DryingButler
@@ -29,6 +36,29 @@ public class LoginActivity extends AppCompatActivity implements View.OnFocusChan
     private ImageView iv_login_password;
     private EditText et_login_username;
     private EditText et_login_password;
+    private TextView tv_register;
+    private GizWifiSDKListener gizListener=new GizWifiSDKListener()
+    {
+        @Override
+        public void didUserLogin(GizWifiErrorCode result, String uid, String token)
+        {
+            if (result==GizWifiErrorCode.GIZ_SDK_SUCCESS)
+            {
+                Toast.makeText(LoginActivity.this,"登录成功,正在登录中",Toast.LENGTH_SHORT).show();
+                //将用户信息缓存
+                SharedUtil.saveStringData("phoneNumber",et_login_username.getText().toString());
+                SharedUtil.saveStringData("password",et_login_password.getText().toString());
+                SharedUtil.saveStringData("token",token);
+                SharedUtil.saveStringData("uid",uid);
+                startActivity(new Intent(LoginActivity.this,MainActivity.class));
+                finish();
+            }
+            else
+            {
+                Toast.makeText(LoginActivity.this,"登录失败",Toast.LENGTH_SHORT).show();
+            }
+        }
+    };
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState)
@@ -46,33 +76,31 @@ public class LoginActivity extends AppCompatActivity implements View.OnFocusChan
         iv_login_password= (ImageView) findViewById(R.id.iv_login_password);
         et_login_username= (EditText) findViewById(R.id.et_login_username);
         et_login_password= (EditText) findViewById(R.id.et_login_password);
+        tv_register= (TextView) findViewById(R.id.tv_register);
         //监听EditText焦点获取状态
         et_login_username.setOnFocusChangeListener(this);
         et_login_password.setOnFocusChangeListener(this);
+        //
+        GizWifiSDK.sharedInstance().setListener(gizListener);
         //为登录按钮设置点击事件
         btn_login.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
             {
-                if (isCorrectUser())
-                {
-                    //如果用户名密码正确则跳转到主界面
-                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                    finish();
-                }
-                else
-                {
-                    Toast.makeText(LoginActivity.this, "用户名或密码错误", Toast.LENGTH_SHORT).show();
-                }
+                //登录
+                GizWifiSDK.sharedInstance().userLogin(et_login_username.getText().toString(),et_login_password.getText().toString());
             }
         });
-    }
-
-    //判断用户名密码是否正确
-    private boolean isCorrectUser()
-    {
-        return true;
+        //
+        tv_register.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                startActivity(new Intent(LoginActivity.this,RegisterActivity.class));//跳转到注册界面
+            }
+        });
     }
 
     @Override

@@ -54,6 +54,7 @@ public class Communication extends Fragment
         fillingViewList();
         pagerAdapter=new ViewPagerAdapterForView(viewList);
         vp_fragment_communication.setAdapter(pagerAdapter);
+        vp_fragment_communication.setOffscreenPageLimit(3);
         vp_fragment_communication.addOnPageChangeListener(new ViewPager.OnPageChangeListener()
         {
             @Override
@@ -73,6 +74,7 @@ public class Communication extends Fragment
             {
 
             }
+
         });
     }
 

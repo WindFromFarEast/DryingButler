@@ -50,6 +50,20 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="220dp"
+        android:layout_height="wrap_content"
+        android:gravity="right">
+
+        <TextView
+            android:id="@+id/tv_register"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="立即注册"
+            android:textColor="@color/colorPrimary"/>
+
+    </LinearLayout>
+
     <Button
         android:id="@+id/btn_login"
         android:layout_width="180dp"
@@ -57,6 +71,6 @@
         android:background="@drawable/btn_login_selector"
         android:text="登 录"
         android:textColor="#ffffff"
-        android:layout_marginTop="30dp"/>
+        android:layout_marginTop="10dp"/>
 
 </LinearLayout>

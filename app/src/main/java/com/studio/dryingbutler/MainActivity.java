@@ -6,6 +6,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.ImageView;
 
+import com.gizwits.gizwifisdk.api.GizWifiSDK;
+import com.studio.dryingbutler.Utils.MyLog;
 import com.studio.dryingbutler.adapter.ViewPagerAdapter;
 import com.studio.dryingbutler.fragment.Discovery;
 import com.studio.dryingbutler.fragment.Equipment;
