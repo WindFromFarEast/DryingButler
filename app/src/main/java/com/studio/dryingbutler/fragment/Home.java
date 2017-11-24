@@ -1,9 +1,13 @@
 package com.studio.dryingbutler.fragment;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.media.audiofx.BassBoost;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -20,6 +24,7 @@ import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 import com.kymjs.rxvolley.RxVolley;
 import com.kymjs.rxvolley.client.HttpCallback;
+import com.studio.dryingbutler.MainActivity;
 import com.studio.dryingbutler.R;
 import com.studio.dryingbutler.Utils.MyLog;
 import com.studio.dryingbutler.Utils.PermissionUtil;
@@ -98,6 +103,16 @@ public class Home extends Fragment
         {
             initLocation();
         }
+        //
+        if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.M)
+        {
+            //获取overlays权限
+            if (!Settings.canDrawOverlays(getActivity()))
+            {
+                startActivityForResult(new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                        Uri.parse("package:"+getActivity().getPackageName())),2);
+            }
+        }
         //完成设备列表
         addToList();
         showDeviceList();
@@ -156,6 +171,30 @@ public class Home extends Fragment
                     }
                 }
                 initLocation();
+                break;
+            }
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        switch (requestCode)
+        {
+            case 2:
+            {
+                if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.M)
+                {
+                    if (Settings.canDrawOverlays(getActivity()))
+                    {
+                        Toast.makeText(getActivity(),"Overlays权限已打开",Toast.LENGTH_SHORT).show();
+                    }
+                    else
+                    {
+                        Toast.makeText(getActivity(),"Overlays权限未打开，将无法收到警告",Toast.LENGTH_SHORT).show();
+                    }
+                }
+                break;
             }
         }
     }

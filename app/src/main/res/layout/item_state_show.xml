@@ -50,48 +50,10 @@
             android:layout_marginLeft="35dp">
 
             <TextView
-                android:id="@+id/tv_state_work"
+                android:id="@+id/tv_state_change"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="正常工作，工作进程50%，阶段第三段"
-                android:textSize="17sp"/>
-
-            <TextView
-                android:id="@+id/tv_state_temp_humidity"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="温度：56℃，湿度：42%"
-                android:textSize="17sp"
-                android:visibility="gone"/>
-
-            <TextView
-                android:id="@+id/tv_state_fan"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="循环风机：开启，辅助风机：开启"
-                android:textSize="17sp"/>
-
-            <TextView
-                android:id="@+id/tv_state_cold"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="冷风门1：开启，冷风门2：关闭"
-                android:textSize="17sp"/>
-
-            <TextView
-                android:id="@+id/tv_state_valve"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="电磁阀1：开启，电磁阀2：关闭"
-                android:textSize="17sp"/>
-
-
-            <TextView
-                android:id="@+id/tv_state_fire"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="鼓风机：开启，点火：开启"
-                android:textSize="17sp"/>
+                android:text="测试用：xxxxxxxxxxxx"/>
 
         </LinearLayout>
 

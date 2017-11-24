@@ -27,6 +27,17 @@ public class Device
     private int humidity;
     private int process;
     private String time;
+    private String desc;
+
+    public String getDesc()
+    {
+        return desc;
+    }
+
+    public void setDesc(String desc)
+    {
+        this.desc = desc;
+    }
 
     public String getName()
     {

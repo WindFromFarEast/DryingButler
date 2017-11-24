@@ -26,8 +26,20 @@ public class SharedUtil
         editor.apply();
     }
 
+    public static void saveBooleanData(String key,boolean isFinished)
+    {
+        SharedPreferences.Editor editor=preferences.edit();
+        editor.putBoolean(key,isFinished);
+        editor.apply();
+    }
+
     public static String getStringData(String key)
     {
         return preferences.getString(key,"NoData");
+    }
+
+    public static boolean getBooleanData(String key)
+    {
+        return preferences.getBoolean(key,false);
     }
 }

@@ -31,6 +31,8 @@
     <uses-permission android:name="android.permission.VIBRATE"/>
     <!--Bugly-->
     <uses-permission android:name="android.permission.READ_LOGS" />
+    <!--窗口权限-->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
 
     <application
         android:name=".application.MyApplication"
@@ -88,6 +90,9 @@
                   android:theme="@style/FullSreen"/>
 
         <activity android:name=".ui.RegisterActivity"
+                  android:theme="@style/FullSreen"/>
+
+        <activity android:name=".ui.AutoControlShowActivity"
                   android:theme="@style/FullSreen"/>
 
         <service android:name="com.baidu.location.f" android:enabled="true" android:process=":remote">

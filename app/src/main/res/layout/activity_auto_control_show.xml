@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:gravity="center">
+
+    <LinearLayout
+        android:id="@+id/ll_auto_control_show"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:visibility="visible">
+
+        <TextView
+            android:id="@+id/tv_auto_control_show_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="名称"
+            android:textSize="30sp"/>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginTop="10dp">
+
+            <TextView
+                android:id="@+id/tv_auto_control_show_first"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="第一阶段"/>
+
+            <ImageView
+                android:id="@+id/iv_auto_control_show_first"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/show_password_no"
+                android:layout_marginLeft="10dp"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginTop="10dp">
+
+            <TextView
+                android:id="@+id/tv_auto_control_show_second"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="第二阶段"/>
+
+            <ImageView
+                android:id="@+id/iv_auto_control_show_second"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/show_password_no"
+                android:layout_marginLeft="10dp"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginTop="10dp">
+
+            <TextView
+                android:id="@+id/tv_auto_control_show_third"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="第一阶段"/>
+
+            <ImageView
+                android:id="@+id/iv_auto_control_show_third"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/show_password_no"
+                android:layout_marginLeft="10dp"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

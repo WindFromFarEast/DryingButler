@@ -46,6 +46,7 @@
             android:layout_width="220dp"
             android:layout_height="wrap_content"
             android:hint="请输入密码"
+            android:inputType="textPassword"
             android:textSize="15sp"/>
 
     </LinearLayout>

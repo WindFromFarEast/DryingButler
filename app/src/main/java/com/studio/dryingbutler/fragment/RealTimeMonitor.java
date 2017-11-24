@@ -4,23 +4,26 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.SeekBar;
+import android.widget.TextView;
+import android.widget.Toast;
 
-import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.components.XAxis;
-import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.LineData;
-import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.formatter.IValueFormatter;
-import com.github.mikephil.charting.listener.ChartTouchListener;
-import com.github.mikephil.charting.listener.OnChartGestureListener;
-import com.github.mikephil.charting.utils.ViewPortHandler;
+import com.gizwits.gizwifisdk.api.GizWifiDevice;
+import com.gizwits.gizwifisdk.api.GizWifiSDK;
 import com.studio.dryingbutler.R;
+import com.studio.dryingbutler.Utils.SharedUtil;
+import com.studio.dryingbutler.application.MyApplication;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.ConcurrentHashMap;
+
 
 /**
  * project name: DryingButler
@@ -31,22 +34,26 @@ import java.util.List;
  * description: 实时监控
  */
 
-public class RealTimeMonitor extends Fragment implements OnChartGestureListener
+public class RealTimeMonitor extends Fragment
 {
-    private LineChart lc_monitor_temp;
-    private LineChart lc_monitor_humidity;
-    //图表数据源
-    private List<Entry> tempChartEntryList=new ArrayList<>();
-    private List<Entry> humidityChartEntryList=new ArrayList<>();
-    //图表DataSet
-    private LineDataSet tempDataSet=new LineDataSet(tempChartEntryList,"Temp");
-    private LineDataSet humidityDataSet=new LineDataSet(humidityChartEntryList,"Humidity");
-    //图表Data
-    private LineData tempData=new LineData(tempDataSet);
-    private LineData humidityData=new LineData(humidityDataSet);
-    //图表数值格式化
-    private TempValueFormatter tempValueFormatter=new TempValueFormatter();
-    private HumidityValueFormatter humidityValueFormatter=new HumidityValueFormatter();
+    private TextView tv_real_time_temperature_desc;
+    private TextView tv_real_time_humidity_desc;
+    private List<GizWifiDevice> devices = GizWifiSDK.sharedInstance().getDeviceList();
+    private GizWifiDevice gizWifiDevice=devices.get(0);
+    int sn=5;
+    private ConcurrentHashMap<String, Object> command = new ConcurrentHashMap<String, Object> ();
+    private Timer mTimer;
+    private SeekBar seekBar_real_time_r;
+    private SeekBar seekBar_real_time_g;
+    private SeekBar seekBar_real_time_b;
+    private SeekBar seekBar_real_time_motor;
+    private int r=0;
+    private int g=0;
+    private int b=0;
+    private TextView tv_real_time_r;
+    private TextView tv_real_time_g;
+    private TextView tv_real_time_b;
+    private TextView tv_real_time_motor;
 
     @Nullable
     @Override
@@ -54,165 +61,154 @@ public class RealTimeMonitor extends Fragment implements OnChartGestureListener
     {
         View view=inflater.inflate(R.layout.fragment_real_time_monitor,null);
         initView(view);
-        insertDataToTempChart(1,2);
-        insertDataToTempChart(2,3);
-        insertDataToTempChart(3,5);
-        insertDataToTempChart(4,3);
-        insertDataToTempChart(5,7);
-        insertDataToTempChart(6,4);
-        insertDataToHumidityChart(1,2);
-        insertDataToHumidityChart(2,3);
-        insertDataToHumidityChart(3,5);
-        insertDataToHumidityChart(4,3);
-        insertDataToHumidityChart(5,7);
-        insertDataToHumidityChart(6,4);
         return view;
     }
 
     private void initView(View view)
     {
-        lc_monitor_temp= (LineChart) view.findViewById(R.id.lc_monitor_temp);
-        lc_monitor_humidity= (LineChart) view.findViewById(R.id.lc_monitor_humidity);
-        setChartAttr();
-    }
+        tv_real_time_temperature_desc= (TextView) view.findViewById(R.id.tv_real_time_temperature_desc);
+        tv_real_time_humidity_desc= (TextView) view.findViewById(R.id.tv_real_time_humidity_desc);
+        seekBar_real_time_r= (SeekBar) view.findViewById(R.id.seekBar_real_time_r);
+        seekBar_real_time_g= (SeekBar) view.findViewById(R.id.seekBar_real_time_g);
+        seekBar_real_time_b= (SeekBar) view.findViewById(R.id.seekBar_real_time_b);
+        seekBar_real_time_motor= (SeekBar) view.findViewById(R.id.seekBar_real_time_motor);
+        tv_real_time_r= (TextView) view.findViewById(R.id.tv_real_time_r);
+        tv_real_time_g= (TextView) view.findViewById(R.id.tv_real_time_g);
+        tv_real_time_b= (TextView) view.findViewById(R.id.tv_real_time_b);
+        tv_real_time_motor= (TextView) view.findViewById(R.id.tv_real_time_motor);
+        seekBar_real_time_motor.setProgress(5);
 
-    private void setChartAttr()
-    {
-        //设置温度图表和湿度图表的一些属性
-        lc_monitor_temp.setOnChartGestureListener(this);
-        lc_monitor_temp.setDrawGridBackground(false);
-        lc_monitor_temp.getDescription().setEnabled(false);
-        lc_monitor_temp.setTouchEnabled(true);
-        lc_monitor_temp.setDragEnabled(true);
-        lc_monitor_temp.setScaleEnabled(true);
-        lc_monitor_temp.setPinchZoom(true);
-        lc_monitor_humidity.setOnChartGestureListener(this);
-        lc_monitor_humidity.setDrawGridBackground(false);
-        lc_monitor_humidity.getDescription().setEnabled(false);
-        lc_monitor_humidity.setTouchEnabled(true);
-        lc_monitor_humidity.setDragEnabled(true);
-        lc_monitor_humidity.setScaleEnabled(true);
-        lc_monitor_humidity.setPinchZoom(true);
-        //X轴显示在底部
-        lc_monitor_temp.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
-        lc_monitor_humidity.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
-        //
-        lc_monitor_temp.getXAxis().setLabelCount(6);
-        lc_monitor_humidity.getXAxis().setLabelCount(6);
-        //隐藏Y轴
-        lc_monitor_humidity.getAxisLeft().setEnabled(false);
-        lc_monitor_humidity.getAxisRight().setEnabled(false);
-        lc_monitor_temp.getAxisRight().setEnabled(false);
-        lc_monitor_temp.getAxisLeft().setEnabled(false);
-        //隐藏图例
-        lc_monitor_temp.getLegend().setEnabled(false);
-        lc_monitor_humidity.getLegend().setEnabled(false);
-        //不显示网格
-        lc_monitor_humidity.getXAxis().setDrawGridLines(false);
-        lc_monitor_temp.getXAxis().setDrawGridLines(false);
-        //设置为曲线
-        tempDataSet.setMode(LineDataSet.Mode.CUBIC_BEZIER);
-        humidityDataSet.setMode(LineDataSet.Mode.CUBIC_BEZIER);
-        //设置曲线粗细
-        tempDataSet.setLineWidth(2.5f);
-        humidityDataSet.setLineWidth(2.5f);
-        //设置坐标点显示数值文字大小
-        tempDataSet.setValueTextSize(15);
-        humidityDataSet.setValueTextSize(15);
-        //格式化坐标点显示数值
-        tempDataSet.setValueFormatter(tempValueFormatter);
-        humidityDataSet.setValueFormatter(humidityValueFormatter);
-        //设置圆点大小
-        tempDataSet.setCircleSize(4.5f);
-        humidityDataSet.setCircleSize(4.5f);
-        //为图表添加数据源
-        lc_monitor_temp.setData(tempData);
-        lc_monitor_humidity.setData(humidityData);
-    }
-
-    //向图表插入新数据点
-    private void insertDataToTempChart(float x, float y)
-    {
-        tempDataSet.addEntry(new Entry(x,y));
-        tempData.notifyDataChanged();
-        lc_monitor_temp.notifyDataSetChanged();
-        lc_monitor_temp.invalidate();
-    }
-
-    //向图表插入新数据点
-    private void insertDataToHumidityChart(float x, float y)
-    {
-        humidityDataSet.addEntry(new Entry(x,y));
-        humidityData.notifyDataChanged();
-        lc_monitor_humidity.notifyDataSetChanged();
-        lc_monitor_humidity.invalidate();
-    }
-
-    @Override
-    public void onChartGestureStart(MotionEvent me, ChartTouchListener.ChartGesture lastPerformedGesture)
-    {
-
-    }
-
-    @Override
-    public void onChartGestureEnd(MotionEvent me, ChartTouchListener.ChartGesture lastPerformedGesture)
-    {
-
-    }
-
-    @Override
-    public void onChartLongPressed(MotionEvent me)
-    {
-
-    }
-
-    @Override
-    public void onChartDoubleTapped(MotionEvent me)
-    {
-
-    }
-
-    @Override
-    public void onChartSingleTapped(MotionEvent me)
-    {
-
-    }
-
-    @Override
-    public void onChartFling(MotionEvent me1, MotionEvent me2, float velocityX, float velocityY)
-    {
-
-    }
-
-    @Override
-    public void onChartScale(MotionEvent me, float scaleX, float scaleY)
-    {
-
-    }
-
-    @Override
-    public void onChartTranslate(MotionEvent me, float dX, float dY)
-    {
-
-    }
-
-    //坐标顶点数据格式化内部类
-    class TempValueFormatter implements IValueFormatter
-    {
-        @Override
-        public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler)
+        seekBar_real_time_r.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener()
         {
-            return value+"℃";
-        }
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser)
+            {
+                tv_real_time_r.setText(""+progress);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar)
+            {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar)
+            {
+                r=seekBar.getProgress();
+                changeLed(r,g,b);
+            }
+        });
+        seekBar_real_time_g.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener()
+        {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser)
+            {
+                tv_real_time_g.setText(""+progress);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar)
+            {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar)
+            {
+                g=seekBar.getProgress();
+                changeLed(r,g,b);
+            }
+        });
+        seekBar_real_time_b.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener()
+        {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser)
+            {
+                tv_real_time_b.setText(""+progress);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar)
+            {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar)
+            {
+                b=seekBar.getProgress();
+                changeLed(r,g,b);
+            }
+        });
+        seekBar_real_time_motor.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener()
+        {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser)
+            {
+                tv_real_time_motor.setText(""+progress);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar)
+            {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar)
+            {
+                changeMotor(seekBar.getProgress()-5);
+            }
+        });
+
+        mTimer=new Timer();
+        setTimerTask();
     }
 
-    //坐标顶点数据格式化内部类
-    class HumidityValueFormatter implements IValueFormatter
+    private void setTimerTask()
     {
-        @Override
-        public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler)
+        mTimer.schedule(new TimerTask()
         {
-            return value+"%";
-        }
+            @Override
+            public void run()
+            {
+                gizWifiDevice.getDeviceStatus(null);
+                try
+                {
+                    Thread.sleep(1000);//等待上个子线程结束
+                    if(getActivity()!=null)
+                    {
+                        getActivity().runOnUiThread(new Runnable()
+                        {
+                            @Override
+                            public void run()
+                            {
+                                tv_real_time_temperature_desc.setText(SharedUtil.getStringData("Temperature") + "℃");
+                                tv_real_time_humidity_desc.setText(SharedUtil.getStringData("Humidity") + "%hf");
+                            }
+                        });
+                    }
+                }
+                catch (InterruptedException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+        },1000,20000);//每隔20s检测一次温湿度
+    }
+
+    private void changeLed(int r,int g,int b)
+    {
+        command.put("LED_R",r);
+        command.put("LED_G",g);
+        command.put("LED_B",b);
+        devices.get(0).write(command,sn);
+    }
+
+    private void changeMotor(int speed)
+    {
+        command.put("Motor_Speed",speed);
+        devices.get(0).write(command,1);
     }
 }
