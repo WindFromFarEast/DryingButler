@@ -54,10 +54,14 @@ public class Monitor extends Fragment
     private Button btn_equipment_show_list;
     public static int CAMERA_PERMISSION_CODE=1;
     private List<GizWifiDevice> devices = GizWifiSDK.sharedInstance().getDeviceList();
+    private ConcurrentHashMap<String, Object> command = new ConcurrentHashMap<String, Object> ();
     private GizWifiDevice gizWifiDevice;
     private int flag=0;
+    private int temp_flag=0;
     private Button btn_warning_motor_no;
     private Button btn_warning_motor_yes;
+    private Button btn_warning_temp_no;
+    private Button btn_warning_temp_yes;
     private GizWifiSDKListener gizListener=new GizWifiSDKListener()
     {
         @Override
@@ -80,11 +84,11 @@ public class Monitor extends Fragment
             if (result!=GizWifiErrorCode.GIZ_SDK_SUCCESS)
             {
                 MyLog.printInfo("result:"+result.name());
-                Toast.makeText(getActivity(),"发现列表失败",Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getActivity(),"发现列表失败",Toast.LENGTH_SHORT).show();
             }
-            Toast.makeText(getActivity(),"发现列表成功",Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getActivity(),"发现列表成功",Toast.LENGTH_SHORT).show();
             MyLog.printInfo(deviceList.toString());
-            Toast.makeText(getActivity(),"设备列表："+deviceList.toString(),Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getActivity(),"设备列表："+deviceList.toString(),Toast.LENGTH_SHORT).show();
             devices=deviceList;
             if (devices.size()>0)
             {
@@ -110,11 +114,11 @@ public class Monitor extends Fragment
         {
             if (result==GizWifiErrorCode.GIZ_SDK_SUCCESS)
             {
-                Toast.makeText(getActivity(),"订阅成功",Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getActivity(),"订阅成功",Toast.LENGTH_SHORT).show();
             }
             else
             {
-                Toast.makeText(getActivity(),"订阅失败",Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getActivity(),"订阅失败",Toast.LENGTH_SHORT).show();
             }
         }
 
@@ -136,31 +140,41 @@ public class Monitor extends Fragment
                 mList.get(0).setWork(true);
                 if (sn==1)
                 {
-                    Toast.makeText(getActivity(),"改变电机转速中",Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getActivity(),"改变电机转速中",Toast.LENGTH_SHORT).show();
                 }
                 if (sn==5)
                 {
-                    Toast.makeText(getActivity(),"改变LED中",Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getActivity(),"改变LED中",Toast.LENGTH_SHORT).show();
                 }
                 else if (dataMap.get("data")!=null)
                 {
                     ConcurrentHashMap<String, Object> map = (ConcurrentHashMap<String, Object>) dataMap.get("data");
-                    Toast.makeText(getActivity(),"Temperature:"+map.get("Temperature").toString()+"\n"
-                            +"Humidity:"+map.get("Humidity"),Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getActivity(),"Temperature:"+map.get("Temperature").toString()+"\n"
+//                            +"Humidity:"+map.get("Humidity"),Toast.LENGTH_SHORT).show();
                     //将温湿度缓存到本地以便在另外的Activity获取
                     SharedUtil.saveStringData("Temperature",map.get("Temperature").toString());
                     SharedUtil.saveStringData("Humidity",map.get("Humidity").toString());
                     //Toast.makeText(getActivity(),"红外线状态:"+map.get("Infrared").toString(),Toast.LENGTH_SHORT).show();
-                    if ((boolean)(map.get("Infrared"))&&flag==0)
+                    if ((boolean)(map.get("Infrared"))&&(flag==0))
                     {
-                        Toast.makeText(getActivity(),"警告：电机出现异常，请检查",Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(getActivity(),"警告：电机出现异常，请检查",Toast.LENGTH_SHORT).show();
                         //弹出警告
                         openWindow();
                         flag=1;//标志到出错位
                     }
                     else if (!((boolean)(map.get("Infrared"))))
                     {
-                        flag=0;//标志到正常位
+                        //flag=0;//标志到正常位
+                    }
+                    if ((Integer.parseInt(SharedUtil.getStringData("Temperature"))>=35)&&(temp_flag==0))
+                    {
+                        //Toast.makeText(getActivity(),"警告：温度过高，请检查",Toast.LENGTH_SHORT).show();
+                        openTempWindow();
+                        temp_flag=1;
+                    }
+                    else if (Integer.parseInt(SharedUtil.getStringData("Temperature"))<35)
+                    {
+                        temp_flag=0;
                     }
                 }
                 else
@@ -308,9 +322,44 @@ public class Monitor extends Fragment
             public void onClick(View v)
             {
                 windowManager.removeView(windowView);
+                flag=0;
             }
         });
         btn_warning_motor_yes.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                windowManager.removeView(windowView);
+                command.put("Motor_Speed",0);
+                gizWifiDevice.write(command,12);
+                flag=0;
+            }
+        });
+        windowManager.addView(windowView,params);
+    }
+
+    private void openTempWindow()
+    {
+        final WindowManager windowManager= (WindowManager) getActivity().getSystemService(Context.WINDOW_SERVICE);
+        WindowManager.LayoutParams params=new WindowManager.LayoutParams();
+        params.width=WindowManager.LayoutParams.MATCH_PARENT;
+        params.height=WindowManager.LayoutParams.MATCH_PARENT;
+        params.flags=WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON|WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH;
+        params.format= PixelFormat.TRANSLUCENT;
+        params.type=WindowManager.LayoutParams.TYPE_PHONE;
+        final View windowView=LayoutInflater.from(getActivity()).inflate(R.layout.temp_warning_dialog,null);
+        btn_warning_temp_no= (Button) windowView.findViewById(R.id.btn_warning_temp_no);
+        btn_warning_temp_yes= (Button) windowView.findViewById(R.id.btn_warning_temp_yes);
+        btn_warning_temp_no.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                windowManager.removeView(windowView);
+            }
+        });
+        btn_warning_temp_yes.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)

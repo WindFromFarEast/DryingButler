@@ -52,11 +52,15 @@ public class AutoDiagnosis extends Fragment implements View.OnClickListener
     private StateShowListAdapter adapter;
     private List<GizWifiDevice> devices = GizWifiSDK.sharedInstance().getDeviceList();
     private GizWifiDevice gizWifiDevice=devices.get(0);
+    private ConcurrentHashMap<String, Object> command = new ConcurrentHashMap<String, Object> ();
     private int flag=0;
     private Activity activity=getActivity();
     private Button btn_warning_motor_no;
     private Button btn_warning_motor_yes;
     private Calendar calendar=Calendar.getInstance();
+    private Button btn_warning_temp_no;
+    private Button btn_warning_temp_yes;
+    private int temp_flag=0;
     private GizWifiDeviceListener gizWifiDeviceListener=new GizWifiDeviceListener()
     {
         @Override
@@ -70,25 +74,35 @@ public class AutoDiagnosis extends Fragment implements View.OnClickListener
                 }
                 if (sn==5)
                 {
-                    updateList("LED的RBG值已改变");
+                    updateList("LED的RGB值已改变");
                 }
                 if (dataMap.get("data")!=null)
                 {
                     ConcurrentHashMap<String, Object> map = (ConcurrentHashMap<String, Object>) dataMap.get("data");
-                    Toast.makeText(activity,"Temperature:"+map.get("Temperature").toString()+"\n"
-                            +"Humidity:"+map.get("Humidity"),Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(activity,"Temperature:"+map.get("Temperature").toString()+"\n"
+//                            +"Humidity:"+map.get("Humidity"),Toast.LENGTH_SHORT).show();
                     SharedUtil.saveStringData("Temperature",map.get("Temperature").toString());
                     SharedUtil.saveStringData("Humidity",map.get("Humidity").toString());
-                    if ((boolean)(map.get("Infrared"))&&flag==0)
+                    if ((boolean)(map.get("Infrared"))&&(flag==0))
                     {
-                        Toast.makeText(activity,"警告：电机出现异常，请检查",Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(activity,"警告：电机出现异常，请检查",Toast.LENGTH_SHORT).show();
                         //弹出警告
                         openWindow();
                         flag=1;//标志到出错位
                     }
                     else if (!((boolean)(map.get("Infrared"))))
                     {
-                        flag=0;
+                        //flag=0;
+                    }
+                    if (((Integer.parseInt(SharedUtil.getStringData("Temperature")))>=35)&&(temp_flag==0))
+                    {
+                        //Toast.makeText(activity,"警告：温度过高，请检查",Toast.LENGTH_SHORT).show();
+                        openTempWindow();
+                        temp_flag=1;
+                    }
+                    else if (Integer.parseInt(SharedUtil.getStringData("Temperature"))<35)
+                    {
+                        temp_flag=0;
                     }
                 }
             }
@@ -204,9 +218,44 @@ public class AutoDiagnosis extends Fragment implements View.OnClickListener
             public void onClick(View v)
             {
                 windowManager.removeView(windowView);
+                flag=0;
             }
         });
         btn_warning_motor_yes.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                windowManager.removeView(windowView);
+                command.put("Motor_Speed",0);
+                gizWifiDevice.write(command,12);
+                flag=0;
+            }
+        });
+        windowManager.addView(windowView,params);
+    }
+
+    private void openTempWindow()
+    {
+        final WindowManager windowManager= (WindowManager) getActivity().getSystemService(Context.WINDOW_SERVICE);
+        WindowManager.LayoutParams params=new WindowManager.LayoutParams();
+        params.width=WindowManager.LayoutParams.MATCH_PARENT;
+        params.height=WindowManager.LayoutParams.MATCH_PARENT;
+        params.flags=WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON|WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH;
+        params.format= PixelFormat.TRANSLUCENT;
+        params.type=WindowManager.LayoutParams.TYPE_PHONE;
+        final View windowView=LayoutInflater.from(getActivity()).inflate(R.layout.temp_warning_dialog,null);
+        btn_warning_temp_no= (Button) windowView.findViewById(R.id.btn_warning_temp_no);
+        btn_warning_temp_yes= (Button) windowView.findViewById(R.id.btn_warning_temp_yes);
+        btn_warning_temp_no.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                windowManager.removeView(windowView);
+            }
+        });
+        btn_warning_temp_yes.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)

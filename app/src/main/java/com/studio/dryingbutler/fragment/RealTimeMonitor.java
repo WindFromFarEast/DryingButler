@@ -1,5 +1,7 @@
 package com.studio.dryingbutler.fragment;
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -12,6 +14,11 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
 import com.gizwits.gizwifisdk.api.GizWifiDevice;
 import com.gizwits.gizwifisdk.api.GizWifiSDK;
 import com.studio.dryingbutler.R;
@@ -36,13 +43,11 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class RealTimeMonitor extends Fragment
 {
-    private TextView tv_real_time_temperature_desc;
-    private TextView tv_real_time_humidity_desc;
     private List<GizWifiDevice> devices = GizWifiSDK.sharedInstance().getDeviceList();
     private GizWifiDevice gizWifiDevice=devices.get(0);
     int sn=5;
     private ConcurrentHashMap<String, Object> command = new ConcurrentHashMap<String, Object> ();
-    private Timer mTimer;
+    private Timer mTimer=new Timer();
     private SeekBar seekBar_real_time_r;
     private SeekBar seekBar_real_time_g;
     private SeekBar seekBar_real_time_b;
@@ -54,6 +59,15 @@ public class RealTimeMonitor extends Fragment
     private TextView tv_real_time_g;
     private TextView tv_real_time_b;
     private TextView tv_real_time_motor;
+    private LineChart chart_temp;
+    private LineChart chart_humidity;
+    private List<Entry> tempEntryList=new ArrayList<>();
+    private List<Entry> humidityEntryList=new ArrayList<>();
+    private LineDataSet tempDataSet;
+    private LineData tempData;
+    private LineDataSet humidityDataSet;
+    private LineData humidityData;
+    private Activity activity;
 
     @Nullable
     @Override
@@ -66,8 +80,6 @@ public class RealTimeMonitor extends Fragment
 
     private void initView(View view)
     {
-        tv_real_time_temperature_desc= (TextView) view.findViewById(R.id.tv_real_time_temperature_desc);
-        tv_real_time_humidity_desc= (TextView) view.findViewById(R.id.tv_real_time_humidity_desc);
         seekBar_real_time_r= (SeekBar) view.findViewById(R.id.seekBar_real_time_r);
         seekBar_real_time_g= (SeekBar) view.findViewById(R.id.seekBar_real_time_g);
         seekBar_real_time_b= (SeekBar) view.findViewById(R.id.seekBar_real_time_b);
@@ -76,7 +88,12 @@ public class RealTimeMonitor extends Fragment
         tv_real_time_g= (TextView) view.findViewById(R.id.tv_real_time_g);
         tv_real_time_b= (TextView) view.findViewById(R.id.tv_real_time_b);
         tv_real_time_motor= (TextView) view.findViewById(R.id.tv_real_time_motor);
+        chart_temp= (LineChart) view.findViewById(R.id.chart_temp);
+        chart_humidity= (LineChart) view.findViewById(R.id.chart_humidity);
         seekBar_real_time_motor.setProgress(5);
+        setTempChart();
+        setHumidityChart();
+        setTimer();
 
         seekBar_real_time_r.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener()
         {
@@ -161,41 +178,6 @@ public class RealTimeMonitor extends Fragment
                 changeMotor(seekBar.getProgress()-5);
             }
         });
-
-        mTimer=new Timer();
-        setTimerTask();
-    }
-
-    private void setTimerTask()
-    {
-        mTimer.schedule(new TimerTask()
-        {
-            @Override
-            public void run()
-            {
-                gizWifiDevice.getDeviceStatus(null);
-                try
-                {
-                    Thread.sleep(1000);//等待上个子线程结束
-                    if(getActivity()!=null)
-                    {
-                        getActivity().runOnUiThread(new Runnable()
-                        {
-                            @Override
-                            public void run()
-                            {
-                                tv_real_time_temperature_desc.setText(SharedUtil.getStringData("Temperature") + "℃");
-                                tv_real_time_humidity_desc.setText(SharedUtil.getStringData("Humidity") + "%hf");
-                            }
-                        });
-                    }
-                }
-                catch (InterruptedException e)
-                {
-                    e.printStackTrace();
-                }
-            }
-        },1000,20000);//每隔20s检测一次温湿度
     }
 
     private void changeLed(int r,int g,int b)
@@ -210,5 +192,94 @@ public class RealTimeMonitor extends Fragment
     {
         command.put("Motor_Speed",speed);
         devices.get(0).write(command,1);
+    }
+
+    private void setTempChart()
+    {
+        String temp=SharedUtil.getStringData("Temperature");
+        if (!temp.isEmpty())
+        {
+            tempEntryList.add(new Entry(1,Integer.parseInt(temp)));
+            tempDataSet=new LineDataSet(tempEntryList,"温度");
+            tempDataSet.setLineWidth(1.75f);
+            tempDataSet.setCircleSize(3f);
+            chart_temp.animateX(3000);
+            chart_temp.animateY(3000);
+            tempData=new LineData(tempDataSet);
+            chart_temp.setData(tempData);
+            chart_temp.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
+            chart_temp.getAxisRight().setEnabled(false);
+            chart_temp.getXAxis().setEnabled(false);
+            chart_temp.getXAxis().setDrawGridLines(false);
+            chart_temp.invalidate();
+        }
+    }
+
+    private void setHumidityChart()
+    {
+        String humidity=SharedUtil.getStringData("Humidity");
+        if (!humidity.isEmpty())
+        {
+            humidityEntryList.add(new Entry(1,Integer.parseInt(humidity)));
+            humidityDataSet=new LineDataSet(humidityEntryList,"湿度");
+            humidityDataSet.setLineWidth(1.75f);
+            humidityDataSet.setCircleSize(3f);
+            chart_humidity.animateX(3000);
+            chart_humidity.animateY(3000);
+            humidityData=new LineData(humidityDataSet);
+            chart_humidity.setData(humidityData);
+            chart_humidity.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
+            chart_humidity.getAxisRight().setEnabled(false);
+            chart_humidity.getXAxis().setEnabled(false);
+            chart_humidity.getXAxis().setDrawGridLines(false);
+            chart_humidity.invalidate();
+        }
+    }
+
+    private void setTimer()
+    {
+        mTimer.schedule(new TimerTask()
+        {
+            int tempX=2;
+            int humidityX=2;
+            @Override
+            public void run()
+            {
+                int temp=Integer.parseInt(SharedUtil.getStringData("Temperature"));
+                int humidity=Integer.parseInt(SharedUtil.getStringData("Humidity"));
+                tempDataSet.addEntry(new Entry(tempX,temp));
+                tempData.notifyDataChanged();
+                chart_temp.notifyDataSetChanged();
+                humidityDataSet.addEntry(new Entry(humidityX,humidity));
+                humidityData.notifyDataChanged();
+                chart_humidity.notifyDataSetChanged();
+                tempX++;
+                humidityX++;
+                activity.runOnUiThread(new Runnable()
+                {
+                    @Override
+                    public void run()
+                    {
+                        chart_temp.invalidate();
+                        chart_humidity.invalidate();
+                    }
+                });
+            }
+        },3000,5000);
+    }
+
+    @Override
+    public void onAttach(Context context)
+    {
+        super.onAttach(context);
+        activity=(Activity) context;
+    }
+
+    @Override
+    public void onDetach()
+    {
+        super.onDetach();
+        mTimer.cancel();
+        activity=null;
     }
 }

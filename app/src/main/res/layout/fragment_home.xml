@@ -63,7 +63,7 @@
                     android:id="@+id/tv_home_location"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="定位中"
+                    android:text="重庆 北碚"
                     android:textSize="18sp"
                     android:textColor="#ffffff"/>
 
@@ -104,7 +104,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="#ffffff"
-            android:text="30℃"
+            android:text="14℃"
             android:textSize="20sp"
             android:layout_marginLeft="15dp"/>
 

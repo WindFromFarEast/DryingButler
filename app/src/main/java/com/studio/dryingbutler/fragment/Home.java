@@ -1,6 +1,8 @@
 package com.studio.dryingbutler.fragment;
 
 import android.Manifest;
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.media.audiofx.BassBoost;
@@ -33,7 +35,10 @@ import com.studio.dryingbutler.application.MyApplication;
 import com.studio.dryingbutler.entity.Device;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * project name: DryingButler
@@ -51,11 +56,16 @@ public class Home extends Fragment
     private TextView tv_home_time;
     private TextView tv_home_date;
     private TextView tv_home_location;
+    Calendar calendar=Calendar.getInstance();
     //设备列表
     private ListView lv_home_device;
     //设备列表数据源及适配器
     private List<Device> mList=new ArrayList<>();
     private DeviceListAdapter listAdapter;
+    //
+    private Timer mTimer=new Timer();
+    //
+    private Activity activity;
     //经纬度
     private double longtitude,latitude;
     private LocationClient mLocationClient=new LocationClient(MyApplication.getContext());
@@ -126,6 +136,9 @@ public class Home extends Fragment
         tv_home_location= (TextView) view.findViewById(R.id.tv_home_location);
         tv_home_time= (TextView) view.findViewById(R.id.tv_home_time);
         lv_home_device= (ListView) view.findViewById(R.id.lv_home_device);
+
+        setTimer();
+        tv_home_date.setText(""+calendar.get(Calendar.YEAR)+"/"+(calendar.get(Calendar.MONTH)+1)+"/"+calendar.get(Calendar.DAY_OF_MONTH));
     }
 
     private void initLocation()
@@ -243,5 +256,45 @@ public class Home extends Fragment
         lv_home_device.setAdapter(listAdapter);
         //取消分割线
         lv_home_device.setDivider(null);
+    }
+
+    private void setTimer()
+    {
+        mTimer.schedule(new TimerTask()
+        {
+            @Override
+            public void run()
+            {
+                activity.runOnUiThread(new Runnable()
+                {
+                    @Override
+                    public void run()
+                    {
+                        if (calendar.get(Calendar.MINUTE)<10)
+                        {
+                            tv_home_time.setText("" + calendar.get(Calendar.HOUR_OF_DAY) + ":" + "0" +calendar.get(Calendar.MINUTE));
+                        }
+                        else
+                        {
+                            tv_home_time.setText("" + calendar.get(Calendar.HOUR_OF_DAY) + ":" + calendar.get(Calendar.MINUTE));
+                        }
+                    }
+                });
+            }
+        },0,60000);
+    }
+
+    @Override
+    public void onAttach(Context context)
+    {
+        super.onAttach(context);
+        activity=(Activity) context;
+    }
+
+    @Override
+    public void onDetach()
+    {
+        super.onDetach();
+        activity=null;
     }
 }

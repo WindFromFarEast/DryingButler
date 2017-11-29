@@ -32,11 +32,12 @@
         android:layout_height="350dp"
         android:orientation="horizontal">
 
-        <com.baidu.mapapi.map.MapView
+        <ImageView
             android:id="@+id/mapView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:clickable="true"/>
+            android:src="@drawable/map"
+            />
 
     </LinearLayout>
 

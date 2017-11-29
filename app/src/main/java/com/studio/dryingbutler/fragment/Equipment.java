@@ -36,78 +36,17 @@ import static android.app.Activity.RESULT_OK;
  * description: 设备页面
  */
 
-public class Equipment extends Fragment implements View.OnClickListener
+public class Equipment extends Fragment
 {
-    private Button btn_equipment_empty_add;
-    private Button btn_equipment_cancel_add;
-    private RelativeLayout rl_equipment_empty;
-    private RelativeLayout rl_equipment_add;
-    private EditText et_equipment_number;
-    private EditText et_equipment_code;
-    private EditText et_equipment_alias;
     public static int CAMERA_PERMISSION_CODE=1;
-    private GizWifiSDKListener gizListener=new GizWifiSDKListener()
-    {
-        @Override
-        public void didBindDevice(GizWifiErrorCode result, String did)
-        {
-            if (result==GizWifiErrorCode.GIZ_SDK_SUCCESS)
-            {
-                Toast.makeText(getActivity(),"绑定成功",Toast.LENGTH_SHORT).show();
-            }
-            else
-            {
-                Toast.makeText(getActivity(),"绑定失败",Toast.LENGTH_SHORT).show();
-            }
-        }
-    };
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
     {
         View view=inflater.inflate(R.layout.fragment_equipment,null);
-        initView(view);
         PermissionUtil.requestPermission(getActivity(),CAMERA_PERMISSION_CODE, Manifest.permission.CAMERA);//请求摄像头的运行时权限
         return view;
-    }
-
-    private void initView(View view)
-    {
-        btn_equipment_cancel_add= (Button) view.findViewById(R.id.btn_equipment_cancel_add);
-        btn_equipment_empty_add= (Button) view.findViewById(R.id.btn_equipment_empty_add);
-        rl_equipment_empty= (RelativeLayout) view.findViewById(R.id.rl_equipment_empty);
-        rl_equipment_add= (RelativeLayout) view.findViewById(R.id.rl_equipment_add);
-        et_equipment_alias= (EditText) view.findViewById(R.id.et_equipment_alias);
-        et_equipment_number= (EditText) view.findViewById(R.id.et_equipment_number);
-        et_equipment_code= (EditText) view.findViewById(R.id.et_equipment_code);
-
-        btn_equipment_empty_add.setOnClickListener(this);
-        btn_equipment_cancel_add.setOnClickListener(this);
-
-        GizWifiSDK.sharedInstance().setListener(gizListener);
-    }
-
-    @Override
-    public void onClick(View v)
-    {
-        switch (v.getId())
-        {
-            case R.id.btn_equipment_empty_add:
-            {
-                //rl_equipment_empty.setVisibility(View.GONE);
-                //rl_equipment_add.setVisibility(View.VISIBLE);
-                Intent openCameraIntent = new Intent(getActivity(),CaptureActivity.class);
-                startActivityForResult(openCameraIntent, 0);
-                break;
-            }
-            case R.id.btn_equipment_cancel_add:
-            {
-                //rl_equipment_add.setVisibility(View.GONE);
-                //rl_equipment_empty.setVisibility(View.VISIBLE);
-                break;
-            }
-        }
     }
 
     @Override
@@ -129,19 +68,6 @@ public class Equipment extends Fragment implements View.OnClickListener
                 }
                 break;
             }
-        }
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode==RESULT_OK)
-        {
-            Bundle bundle = data.getExtras();
-            String scanResult = bundle.getString("result");
-            GizWifiSDK.sharedInstance().bindDeviceByQRCode(SharedUtil.getStringData("uid"),
-                    SharedUtil.getStringData("token"),scanResult);
         }
     }
 }
